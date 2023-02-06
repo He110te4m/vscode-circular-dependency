@@ -1,0 +1,40 @@
+{
+  "name": "@circular-dependency/vscode-circular-dependency",
+  "displayName": "vscode-circular-dependency",
+  "description": "The extendsion to detect circular dependency",
+  "version": "0.0.1",
+  "engines": {
+    "vscode": "^1.75.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "onCommand:vscode-circular-dependency.helloWorld"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "vscode-circular-dependency.helloWorld",
+        "title": "Hello World"
+      }
+    ]
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "pretest": "npm run compile && npm run lint",
+    "lint": "eslint src --ext ts"
+  },
+  "devDependencies": {
+    "@types/glob": "^7.2.0",
+    "@types/node": "14.x",
+    "@types/vscode": "^1.75.0",
+    "glob": "^7.2.0"
+  },
+  "dependencies": {
+    "@circular-dependency/utils": "workspace:^1.0.0"
+  }
+}

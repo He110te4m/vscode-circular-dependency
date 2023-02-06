@@ -1,0 +1,17 @@
+{
+  "folders": [
+    {
+      "name": "ROOT",
+      "path": "../"
+    },
+    {
+      "name": "vscode-circular-dependency",
+      "path": "../apps/vscode-circular-dependency"
+    },
+    {
+      "name": "circular-dependency-utils",
+      "path": "../packages/utils"
+    }
+  ],
+  "settings": {}
+}
