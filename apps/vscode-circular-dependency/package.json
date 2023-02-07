@@ -13,14 +13,6 @@
     "onCommand:vscode-circular-dependency.helloWorld"
   ],
   "main": "./out/extension.js",
-  "contributes": {
-    "commands": [
-      {
-        "command": "vscode-circular-dependency.helloWorld",
-        "title": "Hello World"
-      }
-    ]
-  },
   "scripts": {
     "vscode:prepublish": "npm run compile",
     "compile": "tsc -p ./",
@@ -35,6 +27,52 @@
     "glob": "^7.2.0"
   },
   "dependencies": {
-    "@circular-dependency/utils": "workspace:^1.0.0"
+    "@circular-dependency/utils": "workspace:^1.0.0",
+    "modern-errors": "^5.5.0"
+  },
+  "contributes": {
+    "commands": [
+      {
+        "command": "vscode-circular-dependency.helloWorld",
+        "title": "Hello World"
+      }
+    ],
+    "configuration": {
+      "title": "vscode-circular-dependency",
+      "properties": {
+        "vscode-circular-dependency.alias-map": {
+          "type": "object",
+          "default": {
+            "@": "src",
+            "src": "src",
+            "~": "src"
+          },
+          "description": "path aliases in repository"
+        },
+        "vscode-circular-dependency.packages-root": {
+          "type": "string",
+          "default": "node_modules",
+          "description": "Third-party package storage location"
+        },
+        "vscode-circular-dependency.error-level": {
+          "type": "string",
+          "enum": [
+            "error",
+            "warning",
+            "none"
+          ],
+          "default": "error",
+          "description": "How to display information when a circular dependency is detected"
+        },
+        "vscode-circular-dependency.import-statement-regexp": {
+          "type": "array",
+          "default": [
+            "(?:import\\s+(?:[^\\{\\s]+|\\{(?:.*?)\\})\\s+from\\s+)(?<quote>['\"])(.*?)\\k<quote>",
+            "(?:require\\s*\\(\\s*)(['\"])(.*?)\\1"
+          ],
+          "description": "Used to extract the name of the imported module"
+        }
+      }
+    }
   }
 }

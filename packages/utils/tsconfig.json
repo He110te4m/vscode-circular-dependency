@@ -15,18 +15,13 @@
     ],
     "target": "ES2022",
     "module": "ESNext",
-    "moduleResolution": "NodeNext",
+    "moduleResolution": "node",
     "baseUrl": ".",
     "rootDir": ".",
     "outDir": "dist",
     "types": [
-      "vitest",
-      "vite/client"
-    ],
-    "paths": {
-      "fp-ts/*": [ "node_modules/fp-ts/es6/*" ],
-      "@he110/utils/*": ["src/*"]
-    },
+      "node"
+    ]
   },
   "include": [
     "src/**/*.ts",

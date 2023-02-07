@@ -6,7 +6,8 @@
   "exports": {
     "./file": {
       "import": "./dist/file.js",
-      "require": "./dist/file.cjs"
+      "require": "./dist/file.cjs",
+      "types": "./dist/file.d.ts"
     }
   },
   "files": [
@@ -16,7 +17,7 @@
     "prepare": "npm run build",
     "clean:dist": "rimraf dist",
     "clean:coverage": "rimraf coverages",
-    "build:lib": "vite build --mode prod",
+    "build:lib": "tsup",
     "build": "npm run clean:dist && npm run build:lib",
     "test": "npm run clean:coverages && vitest --coverage --mode test",
     "lint": "npm run lint:eslint",
@@ -27,13 +28,11 @@
   "author": "he110te4m",
   "license": "MIT",
   "devDependencies": {
-    "@vitest/coverage-c8": "^0.27.1",
-    "vite": "^4.0.4",
-    "vite-plugin-chunk-split": "^0.4.7",
-    "vite-plugin-dts": "^1.7.1",
-    "vitest": "^0.27.1"
+    "@types/fs-extra": "^11.0.1",
+    "tsup": "^6.5.0"
   },
   "dependencies": {
-    "fp-ts": "^2.13.1"
+    "fp-ts": "^2.13.1",
+    "fs-extra": "^11.1.0"
   }
 }
