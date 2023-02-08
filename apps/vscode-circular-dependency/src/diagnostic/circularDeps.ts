@@ -5,6 +5,8 @@ import { resolve } from '../helpers/path/resolve'
 
 type CacheStoreType = Memento
 
+type DepResolvedInfoType = Record<'dep' | 'resolvedPath', string>
+
 const errorMessage = 'There is a circular dependency in the current dependency package, please check the dependencies'
 
 export function createCircularDependencyDiagnosticCollection(cacheMap: Memento): Disposable[] {
@@ -59,39 +61,47 @@ function createDiagnosticsByDependencies(document: TextDocument, cacheMap: Cache
 
   return detectCirclularDependency(path, cacheMap)
     .reduce((list, deps) => {
-      const [originImportPackage] = deps
+      const [{ dep: originImportPackage }] = deps
+      if (!originImportPackage) {
+        return list
+      }
       const idx = Math.max(0, fileContent.indexOf(originImportPackage))
       const range = getRangeByIndex(document, idx)
-      const diagnostic = new Diagnostic(range, errorMessage, severity)
+      const diagnostic = new Diagnostic(range, formatErrorMessage(errorMessage, deps), severity)
+
+      diagnostic.source = 'circular-dependency'
 
       return list.concat(diagnostic)
     }, result)
 }
 
 function detectCirclularDependency(targetDepPath: string, cacheMap: CacheStoreType) {
-  const result: string[][] = []
+  const result: DepResolvedInfoType[][] = []
   const checkedDeps = new Set()
   searchDeps(targetDepPath, [])
 
   return result
 
-  function searchDeps(currentDepPath: string, depPathList: string[]) {
+  function searchDeps(currentDepPath: string, depPathList: DepResolvedInfoType[]) {
     const deps = getFileDependenciesByCache(currentDepPath, cacheMap)
     if (!deps.length || checkedDeps.has(currentDepPath)) {
       return
     }
-    depPathList.push(currentDepPath)
-    if (deps.includes(targetDepPath)) {
+
+    if (deps.some(({ resolvedPath }) => resolvedPath === targetDepPath)) {
       result.push(depPathList.slice())
     }
     checkedDeps.add(currentDepPath)
-    deps.forEach(dep => searchDeps(dep, depPathList))
-    depPathList.pop()
+    deps.forEach((dep) => {
+      depPathList.push(dep)
+      searchDeps(dep.resolvedPath, depPathList)
+      depPathList.pop()
+    })
   }
 }
 
 function getFileDependenciesByCache(path: string, cacheMap: CacheStoreType) {
-  const cache = cacheMap.get<string[]>(path)
+  const cache = cacheMap.get<DepResolvedInfoType[]>(path)
   if (cache) {
     return cache
   }
@@ -103,7 +113,7 @@ function getFileDependenciesByCache(path: string, cacheMap: CacheStoreType) {
   return dependencies
 }
 
-function getFileDependencies(path: string): string[] {
+function getFileDependencies(path: string): DepResolvedInfoType[] {
   const pkgDirName = getPackageDirectoryName()
 
   const dependencies = path.split(/[\\/]/g).includes(pkgDirName)
@@ -113,13 +123,16 @@ function getFileDependencies(path: string): string[] {
   return dependencies
 }
 
-function resolveFileDependencies(path: string): string[] {
+function resolveFileDependencies(path: string): DepResolvedInfoType[] {
   const content = getFileContent(path)
-  const packages: string[] = []
+  const packages: DepResolvedInfoType[] = []
 
   return getImportStatRegExpList()
     .reduce(
-      (list, reg) => list.concat(getRegAllMatch(content, reg).map(pkg => resolve(pkg, path))),
+      (list, reg) => list.concat(getRegAllMatch(content, reg).map(dep => ({
+        dep,
+        resolvedPath: resolve(dep, path),
+      }))),
       packages,
     )
 }
@@ -134,4 +147,15 @@ function getFileContent(path: string) {
 
 function getRangeByIndex(document: TextDocument, idx: number) {
   return document.lineAt(document.positionAt(idx)).range
+}
+
+function formatErrorMessage(errorMessage: string, deps: DepResolvedInfoType[]) {
+  return `${errorMessage}
+
+The dependency order is as follows:
+
+${deps.map(({ dep }) => dep).join(' -> ')}
+
+The final file address is ${deps[deps.length - 1].resolvedPath}
+`
 }
