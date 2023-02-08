@@ -1,9 +1,10 @@
 import { isAbsolute, join } from 'node:path'
-import { existsSync } from 'node:fs'
+import { existsSync, statSync } from 'node:fs'
 import { isEmpty } from 'fp-ts/Record'
 
 export interface ResolvePathOption {
   baseDir: string
+  defaultIndexFiles?: string[]
   packageDirectory?: string
   aliasMap?: Record<string, string>
 }
@@ -14,13 +15,14 @@ export interface ResolvePathOption {
  * @param options Resolve Path Option
  * @returns absolute path or `''`
  */
-export function resolvePath(path: string, { baseDir, packageDirectory = '', aliasMap }: ResolvePathOption): string {
+export function resolvePath(path: string, option: ResolvePathOption): string {
+  const { baseDir } = option
   return (path && baseDir)
     ? (
-        handleOriginPath(path)
-        || handleAliasPath(path, baseDir, aliasMap)
-        || handlePkgPath(path, packageDirectory)
-        || handleRealPath(path, baseDir)
+        handleOriginPath(path, option)
+        || handleAliasPath(path, option)
+        || handlePkgPath(path, option)
+        || handleRealPath(path, option)
       )
     : ''
 }
@@ -28,32 +30,35 @@ export function resolvePath(path: string, { baseDir, packageDirectory = '', alia
 //#region Handle different types of paths
 
 /** Process scenarios where the initial incoming path meets the criteria */
-function handleOriginPath(path: string) {
-  return foramtPathResult(path)
+function handleOriginPath(path: string, option: ResolvePathOption) {
+  return foramtPathResult(path, option)
 }
 
 /** Handle scenarios that match path aliases */
-function handleAliasPath(path: string, baseDir: string, aliasMap: ResolvePathOption['aliasMap'] = {}) {
+function handleAliasPath(path: string, option: ResolvePathOption) {
+  const { aliasMap = {} } = option
   if (isEmpty(aliasMap)) {
     return ''
   }
 
   const aliasRelativePath = parserPathByAliasMap(path, aliasMap)
-  return foramtPathResult(resolvePath(aliasRelativePath, { baseDir }))
+  return foramtPathResult(resolvePath(aliasRelativePath, option), option)
 }
 
 /** Handle the matching third-party package address scenario */
-function handlePkgPath(path: string, pkgDir?: string) {
-  if (!pkgDir || !isAbsolute(pkgDir)) {
+function handlePkgPath(path: string, option: ResolvePathOption) {
+  const { packageDirectory } = option
+  if (!packageDirectory || !isAbsolute(packageDirectory)) {
     return ''
   }
 
-  return foramtPathResult(parserPackagePath(path, pkgDir))
+  return foramtPathResult(parserPackagePath(path, packageDirectory), option)
 }
 
 /** Handle matching relative path scenarios */
-function handleRealPath(path: string, baseDir: string) {
-  return foramtPathResult(parseRealPath(path, baseDir))
+function handleRealPath(path: string, option: ResolvePathOption) {
+  const { baseDir } = option
+  return foramtPathResult(parseRealPath(path, baseDir), option)
 }
 
 //#endregion Handle different types of paths
@@ -84,8 +89,21 @@ function parseRealPath(path: string, baseDir: string) {
 //#region Tool functions
 
 /** Format the return result */
-function foramtPathResult(path: string) {
-  return checkPath(path) ? path : ''
+function foramtPathResult(path: string, { defaultIndexFiles }: ResolvePathOption) {
+  if (!checkPath(path)) {
+    return ''
+  }
+  const stat = statSync(path)
+  if (stat.isFile()) {
+    return path
+  }
+  return stat.isDirectory() ? 
+    fillPath(path, defaultIndexFiles).find(checkPath) ?? '' :
+    ''
+}
+
+function fillPath(path: string, defaultIndexFiles: ResolvePathOption['defaultIndexFiles'] = []) {
+  return defaultIndexFiles.map(item => join(path, item))
 }
 
 /** Check that the path meets the requirements */

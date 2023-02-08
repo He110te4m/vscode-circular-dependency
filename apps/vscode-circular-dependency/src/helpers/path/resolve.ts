@@ -34,7 +34,6 @@ function formatPath(path: string, suffix: string) {
   }
 
   const formattedSuffix = suffix.startsWith('.') ? suffix : `.${suffix}`
-
   return path + formattedSuffix
 }
 
