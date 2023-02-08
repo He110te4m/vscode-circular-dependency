@@ -4,21 +4,21 @@
   "description": "",
   "type": "module",
   "exports": {
-    "./file": {
-      "import": "./dist/file.js",
-      "require": "./dist/file.cjs",
-      "types": "./dist/file.d.ts"
+    "./libs/file": {
+      "import": "./libs/file.js",
+      "require": "./libs/file.cjs",
+      "types": "./libs/file.d.ts"
     }
   },
   "files": [
-    "dist"
+    "libs"
   ],
   "scripts": {
     "prepare": "npm run build",
-    "clean:dist": "rimraf dist",
+    "clean:libs": "rimraf libs",
     "clean:coverage": "rimraf coverages",
     "build:lib": "tsup",
-    "build": "npm run clean:dist && npm run build:lib",
+    "build": "npm run clean:libs && npm run build:lib",
     "test": "npm run clean:coverages && vitest --coverage --mode test",
     "lint": "npm run lint:eslint",
     "lint:eslint": "eslint .",

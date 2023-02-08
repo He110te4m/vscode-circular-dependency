@@ -1,8 +1,8 @@
 import { isAbsolute, join } from 'node:path'
-import { existsSync } from 'fs-extra'
+import { existsSync } from 'node:fs'
 import { isEmpty } from 'fp-ts/Record'
 
-interface ResolvePathOption {
+export interface ResolvePathOption {
   baseDir: string
   packageDirectory?: string
   aliasMap?: Record<string, string>
@@ -19,7 +19,7 @@ export function resolvePath(path: string, { baseDir, packageDirectory = '', alia
     ? (
         handleOriginPath(path)
         || handleAliasPath(path, baseDir, aliasMap)
-        || handlePkgPath(path, resolvePath(packageDirectory, { baseDir }))
+        || handlePkgPath(path, packageDirectory)
         || handleRealPath(path, baseDir)
       )
     : ''
@@ -44,7 +44,7 @@ function handleAliasPath(path: string, baseDir: string, aliasMap: ResolvePathOpt
 
 /** Handle the matching third-party package address scenario */
 function handlePkgPath(path: string, pkgDir?: string) {
-  if (!pkgDir) {
+  if (!pkgDir || !isAbsolute(pkgDir)) {
     return ''
   }
 
@@ -53,7 +53,7 @@ function handlePkgPath(path: string, pkgDir?: string) {
 
 /** Handle matching relative path scenarios */
 function handleRealPath(path: string, baseDir: string) {
-  return foramtPathResult(parseRealPath(baseDir, path))
+  return foramtPathResult(parseRealPath(path, baseDir))
 }
 
 //#endregion Handle different types of paths

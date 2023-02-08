@@ -10,7 +10,7 @@
     "Other"
   ],
   "activationEvents": [
-    "onCommand:vscode-circular-dependency.helloWorld"
+    "workspaceContains:**/*"
   ],
   "main": "./out/extension.js",
   "scripts": {
@@ -27,8 +27,7 @@
     "glob": "^7.2.0"
   },
   "dependencies": {
-    "@circular-dependency/utils": "workspace:^1.0.0",
-    "modern-errors": "^5.5.0"
+    "@circular-dependency/utils": "workspace:^1.0.0"
   },
   "contributes": {
     "commands": [
@@ -71,6 +70,14 @@
             "(?:require\\s*\\(\\s*)(['\"])(.*?)\\1"
           ],
           "description": "Used to extract the name of the imported module"
+        },
+        "vscode-circular-dependency.autofill-suffix-list": {
+          "type": "array",
+          "default": [
+            "ts",
+            "js"
+          ],
+          "description": "When the file name used has no suffix, it will try to use the preset suffix to try to match the file"
         }
       }
     }

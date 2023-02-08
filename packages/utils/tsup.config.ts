@@ -10,10 +10,11 @@ export default defineConfig(() => {
     format: ['esm', 'cjs'],
     dts: true,
     splitting: true,
-    minify: true,
+    minify: false,
     clean: true,
     treeshake: true,
-    noExternal: ['fs-extra', /fp-ts\/*/],
+    noExternal: [/fp-ts\/*/],
+    outDir: './libs',
   }
 })
 
