@@ -1,7 +1,7 @@
 import { statSync } from 'fs'
 import { dirname } from 'path'
 import { type ResolvePathOption, resolvePath } from '@circular-dependency/utils/libs/file'
-import { getAliasMap, getAutofillSuffixList, getPackageDirectoryName } from '../config'
+import { getAliasMap, getAutofillSuffixList, getDefaultIndexs, getPackageDirectoryName } from '../config'
 import { getWorkspaceFolder } from './env'
 
 export function resolve(path: string, basePath: string) {
@@ -11,6 +11,7 @@ export function resolve(path: string, basePath: string) {
     baseDir: getDirectory(basePath),
     packageDirectory,
     aliasMap: getAliasMap(),
+    defaultIndexFiles: getDefaultIndexs(),
   }
 
   const suffixList = getAutofillSuffixList().slice()
