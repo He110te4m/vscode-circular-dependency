@@ -1,6 +1,6 @@
 features:
   ☐ 支持配置 glob 正则提取，处理批量导入场景
-  ☐ 支持查看依赖环图
+  ☐ 支持查看依赖环图，计划使用 hover 或 document 添加依赖环图，需要预研一下 api 的功能支持程度
   ☐ utils 补充单测 @low
   ☐ 补充 README @low
   ☐ 预研 auto import 场景支持 @low

@@ -1,4 +1,5 @@
 import { workspace } from 'vscode'
+import type { CommentChars } from '../circularDependencies/types'
 
 export type ErrorLevel = 'error' | 'warning' | 'none'
 
@@ -27,12 +28,18 @@ export function getDefaultIndexs() {
 }
 
 export function getCommentChars() {
-  return getConfig().get<[string, string?][]>('comment-chars', [])
+  return getConfig().get<CommentChars[]>('comment-chars', [])
 }
 
 export function getImportStatRegExpList(): RegExp[] {
   return getConfig()
     .get<string[]>('import-statement-regexp', [])
+    .map(regText => new RegExp(regText, 'g'))
+}
+
+export function getGlobStatRegExpList(): RegExp[] {
+  return getConfig()
+    .get<string[]>('glob-import-statement-regexp', [])
     .map(regText => new RegExp(regText, 'g'))
 }
 
