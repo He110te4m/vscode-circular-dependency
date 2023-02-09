@@ -75,9 +75,30 @@
           "type": "array",
           "default": [
             "ts",
-            "js"
+            "js",
+            "cjs",
+            "mjs"
           ],
           "description": "When the file name used has no suffix, it will try to use the preset suffix to try to match the file"
+        },
+        "vscode-circular-dependency.default-indexs": {
+          "type": "array",
+          "default": [
+            "index.ts",
+            "index.js",
+            "index.cjs",
+            "index.mjs"
+          ],
+          "description": "When the resolved module address is a directory, an attempt is made to match the default index file"
+        },
+        "vscode-circular-dependency.comment-chars": {
+          "type": "array",
+          "default": [
+            ["//"],
+            ["/*", "*/"],
+            ["/**", "*/"]
+          ],
+          "description": "Declaration of annotations, used to verify the validity of the import statement"
         }
       }
     }
