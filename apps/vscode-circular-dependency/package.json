@@ -1,10 +1,17 @@
 {
-  "name": "@circular-dependency/vscode-circular-dependency",
-  "displayName": "vscode-circular-dependency",
+  "name": "vscode-circular-dependency",
+  "displayName": "Circular Dependency",
   "description": "The extendsion to detect circular dependency",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "engines": {
     "vscode": "^1.75.0"
+  },
+  "license": "GPL",
+  "icon": "icons/loop.png",
+  "publisher": "he110te4m",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/He110te4m/vscode-circular-dependency"
   },
   "categories": [
     "Other"
@@ -14,7 +21,11 @@
   ],
   "main": "./out/extension.js",
   "scripts": {
-    "vscode:prepublish": "npm run compile",
+    "package": "npm run vscode:prepublish && npm run package:vsix",
+    "package:vsix": "vsce package --no-dependencies",
+    "clean:dist": "rimraf out",
+    "vscode:prepublish": "npm run clean:dist && npm run esbuild-base -- --minify",
+    "esbuild-base": "esbuild ./src/extension.ts --bundle --outfile=out/extension.js --external:vscode --format=cjs --platform=node",
     "compile": "tsc -p ./",
     "watch": "tsc -watch -p ./",
     "pretest": "npm run compile && npm run lint",
@@ -25,7 +36,9 @@
     "@types/glob": "^7.2.0",
     "@types/node": "14.x",
     "@types/vscode": "^1.75.0",
-    "glob": "^7.2.0"
+    "esbuild": "^0.17.6",
+    "glob": "^7.2.0",
+    "vsce": "^2.15.0"
   },
   "dependencies": {
     "@circular-dependency/utils": "workspace:^1.0.0",
