@@ -1,7 +1,7 @@
 import { type DiagnosticCollection, type Disposable, type Memento, type TextDocument, languages, window, workspace } from 'vscode'
 import { debounce } from 'debounce'
 import { isAllowedCircularDependency } from '../helpers/config'
-import type { CacheStoreType, DepResolvedInfoType } from './types'
+import type { CacheStoreType, DependencyResolvedInfo } from './types'
 import { detectCircularDependencies } from './detectCircularDependencies'
 import { resolveCircularDependencies } from './resolveCircularDependencies'
 import { createDiagnosticsByDependencies } from './createDiagnosticsByDependencies'
@@ -67,8 +67,9 @@ function registerCircularDependencyActions(collection: DiagnosticCollection, cac
   cacheMap.update(uri.fsPath, undefined)
   collection.delete(uri)
 
-  const circularDependencies: DepResolvedInfoType[][] = detectCircularDependencies(uri.fsPath, cacheMap)
+  const circularDependencies: DependencyResolvedInfo[][] = detectCircularDependencies(uri.fsPath, cacheMap, doc)
   const formatterCircularDependencies = resolveCircularDependencies(doc, circularDependencies)
+  // const cleanupDependencies = cleanUpUselessDependencies(doc, formatterCircularDependencies)
 
   // update diagnostic collection
   const diagnosticsList = createDiagnosticsByDependencies(formatterCircularDependencies)

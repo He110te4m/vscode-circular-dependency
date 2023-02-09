@@ -1,18 +1,34 @@
-import { existsSync, readFileSync } from 'node:fs'
+import type { TextDocument } from 'vscode'
 import { checkContentEffectiveness } from '@circular-dependency/utils/libs/comment'
-import { getCommentChars, getImportStatRegExpList, getPackageDirectoryName } from '../helpers/config'
+import { getCommentChars, getGlobStatRegExpList, getImportStatRegExpList, getPackageDirectoryName } from '../helpers/config'
 import { resolve } from '../helpers/path/resolve'
-import type { CacheStoreType, DepResolvedInfoType } from './types'
+import { type GetLineByIndexFn, getDocumentLineByIndex } from '../helpers/document'
+import type { CacheStoreType, DependencyResolvedInfo } from './types'
+import { matchDependenciesByRegExp } from './matchDependencies/matchDependenciesByRegExp'
+import { matchAllRegExp } from './matchDependencies/utils'
+import { matchDependenciesByGlob } from './matchDependencies/matchDependenciesByGlob'
 
-export function detectCircularDependencies(targetDepPath: string, cacheMap: CacheStoreType) {
-  const result: DepResolvedInfoType[][] = []
+interface Options {
+  path: string
+  content: string
+  cacheMap: CacheStoreType
+  getLineByIndex: GetLineByIndexFn
+}
+
+export function detectCircularDependencies(targetDepPath: string, cacheMap: CacheStoreType, doc: TextDocument) {
+  const result: DependencyResolvedInfo[][] = []
   const checkedDeps = new Set()
   searchDeps(targetDepPath, [])
 
   return result
 
-  function searchDeps(currentDepPath: string, depPathList: DepResolvedInfoType[]) {
-    const deps = getFileDependenciesByCache(currentDepPath, cacheMap)
+  function searchDeps(currentDepPath: string, depPathList: DependencyResolvedInfo[]) {
+    const deps = getFileDependenciesByCache({
+      cacheMap,
+      path: currentDepPath,
+      content: doc.getText(),
+      getLineByIndex: getDocumentLineByIndex (doc),
+    })
     if (!deps.length || checkedDeps.has(currentDepPath)) {
       return
     }
@@ -23,56 +39,83 @@ export function detectCircularDependencies(targetDepPath: string, cacheMap: Cach
     checkedDeps.add(currentDepPath)
     deps.forEach((dep) => {
       depPathList.push(dep)
-      searchDeps(dep.resolvedPath, depPathList)
+      dep.resolvedPath && searchDeps(dep.resolvedPath, depPathList)
       depPathList.pop()
     })
   }
 }
 
-function getFileDependenciesByCache(path: string, cacheMap: CacheStoreType) {
-  const cache = cacheMap.get<DepResolvedInfoType[]>(path)
+function getFileDependenciesByCache(opts: Options) {
+  const { path, cacheMap } = opts
+  const cache = cacheMap.get<DependencyResolvedInfo[]>(path)
   if (cache) {
     return cache
   }
 
-  const dependencies = getFileDependencies(path)
+  const dependencies = getFileDependencies(opts)
 
   cacheMap.update(path, dependencies)
 
   return dependencies
 }
 
-function getFileDependencies(path: string): DepResolvedInfoType[] {
+function getFileDependencies(opts: Options): DependencyResolvedInfo[] {
+  const { path } = opts
   const pkgDirName = getPackageDirectoryName()
 
   const dependencies = path.split(/[\\/]/g).includes(pkgDirName)
     ? []
-    : resolveFileDependencies(path)
+    : resolveFileDependencies(opts)
 
   return dependencies
 }
 
-function resolveFileDependencies(path: string): DepResolvedInfoType[] {
-  const content = getFileContent(path)
-  const packages: DepResolvedInfoType[] = []
+function resolveFileDependencies(opts: Options): DependencyResolvedInfo[] {
+  const { getLineByIndex, content } = opts
 
   const commentChars = getCommentChars()
 
-  return getImportStatRegExpList()
-    .reduce(
-      (list, reg) => list.concat(
-        getRegAllMatch(content, reg)
-          .filter(dep => checkContentEffectiveness({ sourceContent: content, targetContent: dep, commentChars }))
-          .map(dep => ({ dep, resolvedPath: resolve(dep, path) })),
-      ),
-      packages,
-    )
+  return resolveDependenciesByRegExp(opts)
+    .concat(resolveDependenciesByGlob(opts))
+    .filter(({ dep }) => {
+      const sourceContent = getLineByIndex(content.indexOf(dep)).text
+
+      return checkContentEffectiveness({
+        sourceContent,
+        targetContent: dep,
+        commentChars,
+      })
+    })
 }
 
-function getRegAllMatch(content: string, reg: RegExp) {
-  return Array.from(content.matchAll(reg)).map(matched => matched[matched.length - 1])
+function resolveDependenciesByRegExp({ path, content }: Options): DependencyResolvedInfo[] {
+  return matchDependenciesByRegExp({
+    content,
+    regList: getImportStatRegExpList(),
+  })
+    .map(dep => ({
+      dep,
+      resolvedPath: resolve(dep, path),
+    }))
 }
 
-function getFileContent(path: string) {
-  return existsSync(path) ? readFileSync(path).toString() : ''
+function resolveDependenciesByGlob({ path, content }: Options): DependencyResolvedInfo[] {
+  const globs = matchFileGlobs(content)
+
+  return globs.flatMap((glob) => {
+    const files = matchDependenciesByGlob({
+      glob,
+      baseDirectory: path,
+    })
+
+    return files.map(globPath => ({
+      dep: glob,
+      resolvedPath: resolve(globPath, path),
+    }))
+  })
+}
+
+function matchFileGlobs(content: string): string[] {
+  return getGlobStatRegExpList()
+    .flatMap(reg => matchAllRegExp(content, reg))
 }

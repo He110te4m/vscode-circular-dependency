@@ -1,6 +1,6 @@
 import { Diagnostic, DiagnosticSeverity, Uri } from 'vscode'
 import { getErrorLevel } from '../helpers/config'
-import type { DepResolvedInfoType, FormatterCircularDependencies } from './types'
+import type { DependencyResolvedInfo, FormatterCircularDependencies } from './types'
 
 const errorMessage = 'There is a circular dependency in the current dependency package, please check the dependencies'
 
@@ -26,7 +26,7 @@ export function createDiagnosticsByDependencies(circularDependencies: FormatterC
   }, result)
 }
 
-function formatErrorMessage(errorMessage: string, deps: DepResolvedInfoType[]) {
+function formatErrorMessage(errorMessage: string, deps: DependencyResolvedInfo[]) {
   return `${errorMessage}
 
 The dependency order is as follows:

@@ -8,7 +8,7 @@ export function resolve(path: string, basePath: string) {
   const packageDirectory = resolvePath(getPackageDirectoryName(), { baseDir: getWorkspaceFolder() })
 
   const opts: ResolvePathOption = {
-    baseDir: getDirectory(basePath),
+    baseDir: getDirectoryByPath(basePath),
     packageDirectory,
     aliasMap: getAliasMap(),
     defaultIndexFiles: getDefaultIndexs(),
@@ -38,7 +38,7 @@ function formatPath(path: string, suffix: string) {
   return path + formattedSuffix
 }
 
-function getDirectory(path: string) {
+export function getDirectoryByPath(path: string) {
   const stat = statSync(path)
   if (stat.isDirectory()) {
     return path
