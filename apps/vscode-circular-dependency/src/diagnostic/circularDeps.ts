@@ -1,6 +1,7 @@
 import { existsSync, readFileSync } from 'fs'
-import { Diagnostic, type DiagnosticCollection, DiagnosticSeverity, type Disposable, type Memento, type TextDocument, languages, window } from 'vscode'
+import { Diagnostic, type DiagnosticCollection, DiagnosticSeverity, type Disposable, type Memento, type TextDocument, languages, window, workspace } from 'vscode'
 import { checkContentEffectiveness } from '@circular-dependency/utils/libs/comment'
+import { debounce } from 'debounce'
 import { getCommentChars, getErrorLevel, getImportStatRegExpList, getPackageDirectoryName, isAllowedCircularDependency } from '../helpers/config'
 import { resolve } from '../helpers/path/resolve'
 
@@ -23,6 +24,7 @@ export function createCircularDependencyDiagnosticCollection(cacheMap: Memento):
   return [
     collection,
     registerForActivationEventListener(collection, cacheMap),
+    registerFileContentChangeEventListener(collection, cacheMap),
   ]
 }
 
@@ -31,8 +33,9 @@ function createCollection() {
 }
 
 function registerForActivationEventListener(collection: DiagnosticCollection, cacheMap: CacheStoreType) {
-  if (window.activeTextEditor) {
-    updateCollection(window.activeTextEditor.document)
+  const { document: doc } = window.activeTextEditor ?? {}
+  if (doc) {
+    updateCollection(collection, cacheMap, doc)
   }
 
   return window.onDidChangeActiveTextEditor((ev) => {
@@ -40,16 +43,27 @@ function registerForActivationEventListener(collection: DiagnosticCollection, ca
       return
     }
 
-    updateCollection(ev.document)
+    updateCollection(collection, cacheMap, ev.document)
   })
+}
 
-  function updateCollection(doc: TextDocument) {
-    const { uri } = doc
+function registerFileContentChangeEventListener(collection: DiagnosticCollection, cacheMap: CacheStoreType) {
+  const updateFn = debounce((doc: TextDocument) => updateCollection(collection, cacheMap, doc), 100)
 
-    collection.delete(uri)
+  return workspace.onDidChangeTextDocument((ev) => {
+    // TODO: Use full update temporarily, then optimize performance later to do throttling
+    updateFn(ev.document)
+  })
+}
 
-    collection.set(uri, createDiagnosticsByDependencies(doc, cacheMap))
-  }
+function updateCollection(collection: DiagnosticCollection, cacheMap: CacheStoreType, doc: TextDocument) {
+  const { uri } = doc
+
+  // clear cache ang error
+  cacheMap.update(uri.fsPath, undefined)
+  collection.delete(uri)
+
+  collection.set(uri, createDiagnosticsByDependencies(doc, cacheMap))
 }
 
 function createDiagnosticsByDependencies(document: TextDocument, cacheMap: CacheStoreType): Diagnostic[] | undefined {
