@@ -97,9 +97,9 @@ function foramtPathResult(path: string, { defaultIndexFiles }: ResolvePathOption
   if (stat.isFile()) {
     return path
   }
-  return stat.isDirectory() ? 
-    fillPath(path, defaultIndexFiles).find(checkPath) ?? '' :
-    ''
+  return stat.isDirectory()
+    ? fillPath(path, defaultIndexFiles).find(checkPath) ?? ''
+    : ''
 }
 
 function fillPath(path: string, defaultIndexFiles: ResolvePathOption['defaultIndexFiles'] = []) {

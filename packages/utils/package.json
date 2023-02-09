@@ -4,6 +4,11 @@
   "description": "",
   "type": "module",
   "exports": {
+    "./libs/comment": {
+      "import": "./libs/comment.js",
+      "require": "./libs/comment.cjs",
+      "types": "./libs/comment.d.ts"
+    },
     "./libs/file": {
       "import": "./libs/file.js",
       "require": "./libs/file.cjs",

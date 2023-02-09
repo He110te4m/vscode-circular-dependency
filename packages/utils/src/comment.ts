@@ -13,8 +13,9 @@ export function checkContentEffectiveness(options: CheckCommentEffectivenessOpti
 
   return checkCharInclude(options)
     && checkEffectivenessByLineComment({ ...options, commentChars: lineCommentChars[1] })
-    && checkEffectivenessByBlockComment({ ...options, commentChars: lineCommentChars[2] })
 }
+
+//#region check effectiveness function
 
 function checkCharInclude({ sourceContent, targetContent }: CheckCommentEffectivenessOptions) {
   return sourceContent.includes(targetContent)
@@ -23,15 +24,17 @@ function checkCharInclude({ sourceContent, targetContent }: CheckCommentEffectiv
 function checkEffectivenessByLineComment({ sourceContent, targetContent, commentChars }: CheckCommentEffectivenessOptions) {
   const idx = sourceContent.indexOf(targetContent)
 
-  return commentChars.some(([char]) => searchLineComment(sourceContent, char, idx))
+  return commentChars.every(([char]) => !searchLineComment(sourceContent, char, idx))
 }
 
-function checkEffectivenessByBlockComment(options: CheckCommentEffectivenessOptions) {
-  return true
-}
+//#endregion
+
+//#region Match comment funtion
 
 function searchLineComment(content: string, commentChar: string, limitIndex: number) {
   const idx = content.indexOf(commentChar)
 
   return idx >= 0 && limitIndex > idx
 }
+
+//#endregion

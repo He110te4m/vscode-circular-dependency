@@ -22,6 +22,14 @@ export function getAutofillSuffixList() {
   return getConfig().get<string[]>('autofill-suffix-list', [])
 }
 
+export function getDefaultIndexs() {
+  return getConfig().get<string[]>('default-indexs', [])
+}
+
+export function getCommentChars() {
+  return getConfig().get<[string, string?][]>('comment-chars', [])
+}
+
 export function getImportStatRegExpList(): RegExp[] {
   return getConfig()
     .get<string[]>('import-statement-regexp', [])

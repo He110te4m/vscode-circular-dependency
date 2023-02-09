@@ -1,6 +1,7 @@
 import { existsSync, readFileSync } from 'fs'
 import { Diagnostic, type DiagnosticCollection, DiagnosticSeverity, type Disposable, type Memento, type TextDocument, languages, window } from 'vscode'
-import { getErrorLevel, getImportStatRegExpList, getPackageDirectoryName, isAllowedCircularDependency } from '../helpers/config'
+import { checkContentEffectiveness } from '@circular-dependency/utils/libs/comment'
+import { getCommentChars, getErrorLevel, getImportStatRegExpList, getPackageDirectoryName, isAllowedCircularDependency } from '../helpers/config'
 import { resolve } from '../helpers/path/resolve'
 
 type CacheStoreType = Memento
@@ -127,12 +128,15 @@ function resolveFileDependencies(path: string): DepResolvedInfoType[] {
   const content = getFileContent(path)
   const packages: DepResolvedInfoType[] = []
 
+  const commentChars = getCommentChars()
+
   return getImportStatRegExpList()
     .reduce(
-      (list, reg) => list.concat(getRegAllMatch(content, reg).map(dep => ({
-        dep,
-        resolvedPath: resolve(dep, path),
-      }))),
+      (list, reg) => list.concat(
+        getRegAllMatch(content, reg)
+          .filter(dep => checkContentEffectiveness({ sourceContent: content, targetContent: dep, commentChars }))
+          .map(dep => ({ dep, resolvedPath: resolve(dep, path) })),
+      ),
       packages,
     )
 }
