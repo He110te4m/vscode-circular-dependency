@@ -1,6 +1,6 @@
 features:
   ☐ 支持配置 glob 正则提取，处理批量导入场景
-  ☐ 添加 code action 快速跳转循环依赖成环点
+  ☐ 支持查看依赖环图
   ☐ utils 补充单测 @low
   ☐ 补充 README @low
   ☐ 预研 auto import 场景支持 @low
@@ -13,6 +13,7 @@ bugfix:
   ☐ 内置正则需要支持块注释 @low
 
 Archive:
+  ✔ 添加 action 快速跳转循环依赖成环点 @done(23-02-09 15:14) @project(features)
   ✔ 识别注释符，校验导入语句有效性 @done(23-02-09 14:17) @project(features)
   ✔ 发布 0.1.0 版本 @done(23-02-09 14:14) @project(features)
   ✔ 监听文件内容变更时，需要更新 import 依赖关系（配置节流防抖） @critical @done(23-02-09 14:13) @project(features)

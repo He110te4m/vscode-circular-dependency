@@ -1,5 +1,5 @@
 import { existsSync, readFileSync } from 'fs'
-import { Diagnostic, type DiagnosticCollection, DiagnosticSeverity, type Disposable, type Memento, type TextDocument, languages, window, workspace } from 'vscode'
+import { Diagnostic, type DiagnosticCollection, DiagnosticSeverity, type Disposable, type Memento, type Range, type TextDocument, Uri, languages, window, workspace } from 'vscode'
 import { checkContentEffectiveness } from '@circular-dependency/utils/libs/comment'
 import { debounce } from 'debounce'
 import { getCommentChars, getErrorLevel, getImportStatRegExpList, getPackageDirectoryName, isAllowedCircularDependency } from '../helpers/config'
@@ -9,7 +9,14 @@ type CacheStoreType = Memento
 
 type DepResolvedInfoType = Record<'dep' | 'resolvedPath', string>
 
+interface FormatterCircularDependencies {
+  deps: DepResolvedInfoType[]
+  range: Range
+}
+
 const errorMessage = 'There is a circular dependency in the current dependency package, please check the dependencies'
+
+const disposables: Disposable[] = []
 
 export function createCircularDependencyDiagnosticCollection(cacheMap: Memento): Disposable[] {
   if (isAllowedCircularDependency()) {
@@ -25,7 +32,16 @@ export function createCircularDependencyDiagnosticCollection(cacheMap: Memento):
     collection,
     registerForActivationEventListener(collection, cacheMap),
     registerFileContentChangeEventListener(collection, cacheMap),
+    {
+      dispose: cleanDisposables,
+    },
   ]
+}
+
+function cleanDisposables() {
+  disposables.forEach(({ dispose }) => {
+    dispose()
+  })
 }
 
 function createCollection() {
@@ -35,7 +51,7 @@ function createCollection() {
 function registerForActivationEventListener(collection: DiagnosticCollection, cacheMap: CacheStoreType) {
   const { document: doc } = window.activeTextEditor ?? {}
   if (doc) {
-    updateCollection(collection, cacheMap, doc)
+    registerCircularDependencyActions(collection, cacheMap, doc)
   }
 
   return window.onDidChangeActiveTextEditor((ev) => {
@@ -43,12 +59,12 @@ function registerForActivationEventListener(collection: DiagnosticCollection, ca
       return
     }
 
-    updateCollection(collection, cacheMap, ev.document)
+    registerCircularDependencyActions(collection, cacheMap, ev.document)
   })
 }
 
 function registerFileContentChangeEventListener(collection: DiagnosticCollection, cacheMap: CacheStoreType) {
-  const updateFn = debounce((doc: TextDocument) => updateCollection(collection, cacheMap, doc), 100)
+  const updateFn = debounce((doc: TextDocument) => registerCircularDependencyActions(collection, cacheMap, doc), 100)
 
   return workspace.onDidChangeTextDocument((ev) => {
     // TODO: Use full update temporarily, then optimize performance later to do throttling
@@ -56,38 +72,58 @@ function registerFileContentChangeEventListener(collection: DiagnosticCollection
   })
 }
 
-function updateCollection(collection: DiagnosticCollection, cacheMap: CacheStoreType, doc: TextDocument) {
+function registerCircularDependencyActions(collection: DiagnosticCollection, cacheMap: CacheStoreType, doc: TextDocument) {
   const { uri } = doc
 
   // clear cache ang error
   cacheMap.update(uri.fsPath, undefined)
   collection.delete(uri)
 
-  collection.set(uri, createDiagnosticsByDependencies(doc, cacheMap))
+  const circularDependencies: DepResolvedInfoType[][] = detectCirclularDependency(uri.fsPath, cacheMap)
+  const formatterCircularDependencies = formatCircularDependencies(doc, circularDependencies)
+
+  // update diagnostic collection
+  const diagnosticsList = createDiagnosticsByDependencies(formatterCircularDependencies)
+  collection.set(uri, diagnosticsList)
 }
 
-function createDiagnosticsByDependencies(document: TextDocument, cacheMap: CacheStoreType): Diagnostic[] | undefined {
-  const { fsPath: path } = document.uri
+function formatCircularDependencies(doc: TextDocument, circularDependencies: DepResolvedInfoType[][]) {
+  const { fsPath: path } = doc.uri
 
   const fileContent = getFileContent(path)
+
+  return circularDependencies.map((deps): FormatterCircularDependencies => {
+    const [{ dep: originImportPackage }] = deps
+    const idx = !originImportPackage ? 0 : Math.max(0, fileContent.indexOf(originImportPackage))
+    const range = getRangeByIndex(doc, idx)
+
+    return {
+      range,
+      deps,
+    }
+  })
+}
+
+function createDiagnosticsByDependencies(circularDependencies: FormatterCircularDependencies[]): Diagnostic[] {
   const result: Diagnostic[] = []
 
   const severity = getErrorLevel() === 'error' ? DiagnosticSeverity.Error : DiagnosticSeverity.Warning
 
-  return detectCirclularDependency(path, cacheMap)
-    .reduce((list, deps) => {
-      const [{ dep: originImportPackage }] = deps
-      if (!originImportPackage) {
-        return list
-      }
-      const idx = Math.max(0, fileContent.indexOf(originImportPackage))
-      const range = getRangeByIndex(document, idx)
-      const diagnostic = new Diagnostic(range, formatErrorMessage(errorMessage, deps), severity)
+  return circularDependencies.reduce((list, { deps, range }) => {
+    const [{ dep: originImportPackage }] = deps
+    if (!originImportPackage) {
+      return list
+    }
+    const diagnostic = new Diagnostic(range, formatErrorMessage(errorMessage), severity)
+    diagnostic.code = {
+      value: 'Go to circular dependency',
+      target: Uri.file(deps[deps.length - 1].resolvedPath),
+    }
 
-      diagnostic.source = 'circular-dependency'
+    diagnostic.source = 'circular-dependency'
 
-      return list.concat(diagnostic)
-    }, result)
+    return list.concat(diagnostic)
+  }, result)
 }
 
 function detectCirclularDependency(targetDepPath: string, cacheMap: CacheStoreType) {
@@ -167,13 +203,6 @@ function getRangeByIndex(document: TextDocument, idx: number) {
   return document.lineAt(document.positionAt(idx)).range
 }
 
-function formatErrorMessage(errorMessage: string, deps: DepResolvedInfoType[]) {
-  return `${errorMessage}
-
-The dependency order is as follows:
-
-${deps.map(({ dep }) => dep).join(' -> ')}
-
-The final file address is ${deps[deps.length - 1].resolvedPath}
-`
+function formatErrorMessage(errorMessage: string) {
+  return errorMessage
 }
