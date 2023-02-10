@@ -8,15 +8,27 @@ export function resolveCircularDependencies(doc: TextDocument, circularDependenc
 
   const fileContent = getFileContent(path)
 
-  return circularDependencies.map((deps): FormatterCircularDependencies => {
+  return circularDependencies.flatMap((deps): FormatterCircularDependencies[] => {
     const [{ dep: originImportPackage }] = deps
-    const idx = !originImportPackage ? 0 : Math.max(0, fileContent.indexOf(originImportPackage))
-    const { range } = getDocumentLineByIndex(doc, idx)
-
-    return {
-      range,
-      deps,
+    if (!originImportPackage) {
+      return []
     }
+
+    let startIdx = -1
+    const idxList = []
+    while (true) {
+      startIdx = fileContent.indexOf(originImportPackage, startIdx + 1)
+      if (startIdx < 0) {
+        break
+      }
+
+      idxList.push(startIdx)
+    }
+
+    return idxList.map(idx => ({
+      deps,
+      range: getDocumentLineByIndex(doc, idx).range,
+    }))
   })
 }
 

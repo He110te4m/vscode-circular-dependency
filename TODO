@@ -7,11 +7,12 @@ features:
 bugfix:
   ☐ 验证导入语句换行后是否能匹配
   ☐ 排查 resolve 执行次数异常问题（多执行一次）
-  ☐ 支持块注释符处理
   ☐ 文件内容变更时，使用局部更新，不全量更新依赖关系
-  ☐ 内置正则需要支持块注释 @low
 
 Archive:
+  ✔ 内置正则需要支持块注释 @low @done(23-02-10 15:48) @project(bugfix)
+  ✔ 支持块注释符处理 @done(23-02-10 15:48) @project(features)
+  ✔ 支持同个模块多次导入 @done(23-02-10 15:48) @project(features)
   ✔ 支持配置 glob 正则提取，处理批量导入场景 @done(23-02-10 14:44) @project(features)
   ✔ 添加 action 快速跳转循环依赖成环点 @done(23-02-09 15:14) @project(features)
   ✔ 识别注释符，校验导入语句有效性 @done(23-02-09 14:17) @project(features)
