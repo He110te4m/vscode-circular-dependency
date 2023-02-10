@@ -6,10 +6,10 @@ features:
   ☐ 预研 auto import 场景支持 @low
 
 bugfix:
-  ☐ 排查 resolve 执行次数异常问题（多执行一次）
   ☐ 文件内容变更时，使用局部更新，不全量更新依赖关系
 
 Archive:
+  ✘ 排查 resolve 执行次数异常问题（多执行一次）  结论：非问题，检测参数分别为： a.ts、b.ts、a.ts，此时两个 a.ts 绝对地址相同，结束循环依赖查找 @cancelled(23-02-10 15:58) @project(bugfix)
   ✔ 验证导入语句换行后是否能匹配 @done(23-02-10 15:53) @project(bugfix)
   ✔ 内置正则需要支持块注释 @low @done(23-02-10 15:48) @project(bugfix)
   ✔ 支持块注释符处理 @done(23-02-10 15:48) @project(features)
