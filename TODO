@@ -1,15 +1,16 @@
 features:
   ☐ 支持查看依赖环图，计划使用 hover 或 document 添加依赖环图，需要预研一下 api 的功能支持程度
+  ☐ 优化导入语句换行时的报错，需要跨行覆盖完整语句 @low
   ☐ utils 补充单测 @low
   ☐ 补充 README @low
   ☐ 预研 auto import 场景支持 @low
 
 bugfix:
-  ☐ 验证导入语句换行后是否能匹配
   ☐ 排查 resolve 执行次数异常问题（多执行一次）
   ☐ 文件内容变更时，使用局部更新，不全量更新依赖关系
 
 Archive:
+  ✔ 验证导入语句换行后是否能匹配 @done(23-02-10 15:53) @project(bugfix)
   ✔ 内置正则需要支持块注释 @low @done(23-02-10 15:48) @project(bugfix)
   ✔ 支持块注释符处理 @done(23-02-10 15:48) @project(features)
   ✔ 支持同个模块多次导入 @done(23-02-10 15:48) @project(features)
