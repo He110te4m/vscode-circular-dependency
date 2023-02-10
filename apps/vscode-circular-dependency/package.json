@@ -2,7 +2,7 @@
   "name": "vscode-circular-dependency",
   "displayName": "Circular Dependency",
   "description": "The extendsion to detect circular dependency",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "engines": {
     "vscode": "^1.75.0"
   },

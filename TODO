@@ -1,5 +1,4 @@
 features:
-  ☐ 支持配置 glob 正则提取，处理批量导入场景
   ☐ 支持查看依赖环图，计划使用 hover 或 document 添加依赖环图，需要预研一下 api 的功能支持程度
   ☐ utils 补充单测 @low
   ☐ 补充 README @low
@@ -13,6 +12,7 @@ bugfix:
   ☐ 内置正则需要支持块注释 @low
 
 Archive:
+  ✔ 支持配置 glob 正则提取，处理批量导入场景 @done(23-02-10 14:44) @project(features)
   ✔ 添加 action 快速跳转循环依赖成环点 @done(23-02-09 15:14) @project(features)
   ✔ 识别注释符，校验导入语句有效性 @done(23-02-09 14:17) @project(features)
   ✔ 发布 0.1.0 版本 @done(23-02-09 14:14) @project(features)
