@@ -83,6 +83,7 @@ function resolveFileDependencies(opts: Options): DependencyResolvedInfo[] {
       return checkContentEffectiveness({
         sourceContent,
         targetContent: dep,
+        allContent: content,
         commentChars,
       })
     })
@@ -117,5 +118,5 @@ function resolveDependenciesByGlob({ path, content }: Options): DependencyResolv
 
 function matchFileGlobs(content: string): string[] {
   return getGlobStatRegExpList()
-    .flatMap(reg => matchAllRegExp(content, reg))
+    .flatMap(matchAllRegExp(content))
 }
