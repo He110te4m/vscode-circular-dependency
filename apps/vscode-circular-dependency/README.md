@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="./icons/loop.png" alt="Circular Dependency Icon" height="150">
+  <img src="https://raw.githubusercontent.com/He110te4m/vscode-circular-dependency/c853cef5247a10bc1d75f0d21530d07aeb81d89d/apps/vscode-circular-dependency/icons/loop.png" alt="Circular Dependency Icon" height="150">
 </p>
 
 <h1 align="center">Circular Dependency</h1>
