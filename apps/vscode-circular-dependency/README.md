@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="./icons/loop.svg" alt="Circular Dependency Icon" height="150">
+  <img src="./icons/loop.png" alt="Circular Dependency Icon" height="150">
 </p>
 
 <h1 align="center">Circular Dependency</h1>
