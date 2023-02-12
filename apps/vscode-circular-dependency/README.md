@@ -37,7 +37,7 @@
 
 > Unless otherwise specified, the configuration content is the plugin default.
 
-## Warning level
+## Features toggle
 
 ```json5
 {
@@ -46,7 +46,7 @@
 }
 ```
 
-## project environment
+## Project environment
 
 ```json5
 {

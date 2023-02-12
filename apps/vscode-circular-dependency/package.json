@@ -58,7 +58,17 @@
             "none"
           ],
           "default": "error",
-          "description": "How to display information when a circular dependency is detected"
+          "description": "How to display information when a circular dependency is detected."
+        },
+        "vscode-circular-dependency.enable-dependency-loop": {
+          "type": "boolean",
+          "default": false,
+          "description": "The dependency loop graph is displayed when the dependency loop is hover."
+        },
+        "vscode-circular-dependency.enable-going-to-the-dependent-file": {
+          "type": "boolean",
+          "default": false,
+          "description": "Add CodeLens to show all the dependent files in the circular dependencies, and allow a quick jump to the corresponding file."
         },
         "vscode-circular-dependency.packages-root": {
           "type": "string",
@@ -72,7 +82,7 @@
             "src": "src",
             "~": "src"
           },
-          "description": "path aliases in repository"
+          "description": "Path aliases in repository."
         },
         "vscode-circular-dependency.comment-chars": {
           "type": "array",
@@ -89,7 +99,7 @@
               "*/"
             ]
           ],
-          "description": "Declaration of annotations, used to verify the validity of the import statement"
+          "description": "Declaration of annotations, used to verify the validity of the import statement."
         },
         "vscode-circular-dependency.import-statement-regexp": {
           "type": "array",
@@ -98,14 +108,14 @@
             "(?:import\\s*\\(\\s*)(['\"])(?<quote>['\"])(.*?)\\k<quote>",
             "(?:require\\s*\\(\\s*)(['\"])(?<quote>['\"])(.*?)\\k<quote>"
           ],
-          "description": "Used to extract the name of the imported module"
+          "description": "Used to extract the name of the imported module."
         },
         "vscode-circular-dependency.glob-import-statement-regexp": {
           "type": "array",
           "default": [
             "(?:import\\.meta\\.glob\\(\\s*)(?<quote>['\"])(.*?)\\k<quote>"
           ],
-          "description": "Used to extract statements for bulk import through Glob syntax"
+          "description": "Used to extract statements for bulk import through Glob syntax."
         },
         "vscode-circular-dependency.autofill-suffix-list": {
           "type": "array",
@@ -115,7 +125,7 @@
             "cjs",
             "mjs"
           ],
-          "description": "When the file name used has no suffix, it will try to use the preset suffix to try to match the file"
+          "description": "When the file name used has no suffix, it will try to use the preset suffix to try to match the file."
         },
         "vscode-circular-dependency.default-indexs": {
           "type": "array",
@@ -125,7 +135,7 @@
             "index.cjs",
             "index.mjs"
           ],
-          "description": "When the resolved module address is a directory, an attempt is made to match the default index file"
+          "description": "When the resolved module address is a directory, an attempt is made to match the default index file."
         }
       }
     }

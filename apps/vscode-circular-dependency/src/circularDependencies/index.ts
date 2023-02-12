@@ -1,45 +1,53 @@
-import { type DiagnosticCollection, type Disposable, type Memento, type TextDocument, languages, window, workspace } from 'vscode'
+import { type DiagnosticCollection, type Disposable, type Memento, type TextDocument, type Uri, languages, window, workspace } from 'vscode'
 import { debounce } from 'debounce'
 import { isAllowedCircularDependency } from '../helpers/config'
-import type { CacheStoreType, DependencyResolvedInfo } from './types'
+import type { CacheStoreType } from './types'
 import { detectCircularDependencies } from './detectCircularDependencies'
 import { resolveCircularDependencies } from './resolveCircularDependencies'
 import { createDiagnosticsByDependencies } from './createDiagnosticsByDependencies'
 
 const disposables: Disposable[] = []
 
+interface AllCacheCollections {
+  diagnosticCacheStore: DiagnosticCollection
+  dependenciesCacheStore: CacheStoreType
+}
+
 export function useCircularDependenciesDetection(cacheMap: Memento): Disposable[] {
   if (isAllowedCircularDependency()) {
     return []
   }
 
-  const collection = createCollection()
+  const collection = languages.createDiagnosticCollection()
+  const cacheCollectoions: AllCacheCollections = {
+    diagnosticCacheStore: collection,
+    dependenciesCacheStore: cacheMap,
+  }
 
-  // TODO: clean data
-  cacheMap.keys().forEach(key => cacheMap.update(key, undefined))
+  // cleanCacheMap(cacheCollectoions)
 
   return [
     collection,
-    { dispose: cleanDisposables },
-    registerForActivationEventListener(collection, cacheMap),
-    registerFileContentChangeEventListener(collection, cacheMap),
+    cleanDisposables(),
+    registerForActivationEventListener(cacheCollectoions),
+    registerFileContentChangeEventListener(cacheCollectoions),
   ]
 }
 
 function cleanDisposables() {
-  disposables.forEach(({ dispose }) => {
-    dispose()
-  })
+  return {
+    dispose: () => {
+      disposables.forEach(({ dispose }) => {
+        dispose()
+      })
+    },
+  }
 }
 
-function createCollection() {
-  return languages.createDiagnosticCollection()
-}
-
-function registerForActivationEventListener(collection: DiagnosticCollection, cacheMap: CacheStoreType) {
+function registerForActivationEventListener(opts: AllCacheCollections) {
   const { document: doc } = window.activeTextEditor ?? {}
   if (doc) {
-    registerCircularDependencyActions(collection, cacheMap, doc)
+    registerCircularDependencyActions(doc, opts)
   }
 
   return window.onDidChangeActiveTextEditor((ev) => {
@@ -47,12 +55,12 @@ function registerForActivationEventListener(collection: DiagnosticCollection, ca
       return
     }
 
-    registerCircularDependencyActions(collection, cacheMap, ev.document)
+    registerCircularDependencyActions(ev.document, opts)
   })
 }
 
-function registerFileContentChangeEventListener(collection: DiagnosticCollection, cacheMap: CacheStoreType) {
-  const updateFn = debounce((doc: TextDocument) => registerCircularDependencyActions(collection, cacheMap, doc), 100)
+function registerFileContentChangeEventListener(opts: AllCacheCollections) {
+  const updateFn = debounce((doc: TextDocument) => registerCircularDependencyActions(doc, opts), 100)
 
   return workspace.onDidChangeTextDocument((ev) => {
     // TODO: Use full update temporarily, then optimize performance later to do throttling
@@ -60,18 +68,33 @@ function registerFileContentChangeEventListener(collection: DiagnosticCollection
   })
 }
 
-function registerCircularDependencyActions(collection: DiagnosticCollection, cacheMap: CacheStoreType, doc: TextDocument) {
+function registerCircularDependencyActions(doc: TextDocument, opts: AllCacheCollections) {
   const { uri } = doc
+  const { diagnosticCacheStore, dependenciesCacheStore } = opts
 
   // clear cache ang error
-  cacheMap.update(uri.fsPath, undefined)
-  collection.delete(uri)
-
-  const circularDependencies: DependencyResolvedInfo[][] = detectCircularDependencies(uri.fsPath, cacheMap)
-  const formatterCircularDependencies = resolveCircularDependencies(doc, circularDependencies)
-  // const cleanupDependencies = cleanUpUselessDependencies(doc, formatterCircularDependencies)
+  deleteCacheByUri(uri, opts)
 
   // update diagnostic collection
-  const diagnosticsList = createDiagnosticsByDependencies(formatterCircularDependencies)
-  collection.set(uri, diagnosticsList)
+  const diagnosticsList = createDiagnosticsByDependencies(
+    getFormatterCircularDependencies(dependenciesCacheStore, doc),
+  )
+  diagnosticCacheStore.set(uri, diagnosticsList)
+}
+
+function getFormatterCircularDependencies(cacheMap: CacheStoreType, doc: TextDocument) {
+  return resolveCircularDependencies(
+    doc,
+    detectCircularDependencies(doc.uri.fsPath, cacheMap),
+  )
+}
+
+function deleteCacheByUri(uri: Uri, { diagnosticCacheStore, dependenciesCacheStore }: AllCacheCollections) {
+  diagnosticCacheStore.delete(uri)
+  dependenciesCacheStore.update(uri.fsPath, undefined)
+}
+
+function cleanCacheMap({ diagnosticCacheStore, dependenciesCacheStore }: AllCacheCollections) {
+  diagnosticCacheStore.clear()
+  dependenciesCacheStore.keys().forEach(key => dependenciesCacheStore.update(key, undefined))
 }
