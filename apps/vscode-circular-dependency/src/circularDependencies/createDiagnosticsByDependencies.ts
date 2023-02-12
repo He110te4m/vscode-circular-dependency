@@ -16,7 +16,7 @@ export function createDiagnosticsByDependencies(circularDependencies: FormatterC
     }
     const diagnostic = new Diagnostic(range, formatErrorMessage(errorMessage, deps), severity)
     diagnostic.code = {
-      value: 'Go to circular dependency',
+      value: '(Go to circular dependency)',
       target: Uri.file(deps[deps.length - 1].resolvedPath),
     }
 
