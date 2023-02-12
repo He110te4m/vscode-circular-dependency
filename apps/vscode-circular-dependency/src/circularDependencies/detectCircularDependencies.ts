@@ -1,8 +1,7 @@
-import type { TextDocument } from 'vscode'
 import { checkContentEffectiveness } from '@circular-dependency/utils/libs/comment'
 import { getCommentChars, getGlobStatRegExpList, getImportStatRegExpList, getPackageDirectoryName } from '../helpers/config'
 import { resolve } from '../helpers/path/resolve'
-import { type GetLineByIndexFn, getDocumentLineByIndex } from '../helpers/document'
+import { getFileContent } from '../helpers/file'
 import type { CacheStoreType, DependencyResolvedInfo } from './types'
 import { matchDependenciesByRegExp } from './matchDependencies/matchDependenciesByRegExp'
 import { matchAllRegExp } from './matchDependencies/utils'
@@ -12,10 +11,10 @@ interface Options {
   path: string
   content: string
   cacheMap: CacheStoreType
-  getLineByIndex: GetLineByIndexFn
+  getLineBySubchar: (char: string) => string
 }
 
-export function detectCircularDependencies(targetDepPath: string, cacheMap: CacheStoreType, doc: TextDocument) {
+export function detectCircularDependencies(targetDepPath: string, cacheMap: CacheStoreType) {
   const result: DependencyResolvedInfo[][] = []
   const checkedDeps = new Set()
   searchDeps(targetDepPath, [])
@@ -23,20 +22,23 @@ export function detectCircularDependencies(targetDepPath: string, cacheMap: Cach
   return result
 
   function searchDeps(currentDepPath: string, depPathList: DependencyResolvedInfo[]) {
+    const content = getFileContent(currentDepPath)
+
     const deps = getFileDependenciesByCache({
+      content,
       cacheMap,
       path: currentDepPath,
-      content: doc.getText(),
-      getLineByIndex: getDocumentLineByIndex (doc),
+      getLineBySubchar: makeGetLineTextBySubchar(content),
     })
     if (!deps.length || checkedDeps.has(currentDepPath)) {
       return
     }
 
+    checkedDeps.add(currentDepPath)
+
     if (deps.some(({ resolvedPath }) => resolvedPath === targetDepPath)) {
       result.push(depPathList.slice())
     }
-    checkedDeps.add(currentDepPath)
     deps.forEach((dep) => {
       depPathList.push(dep)
       dep.resolvedPath && searchDeps(dep.resolvedPath, depPathList)
@@ -71,14 +73,14 @@ function getFileDependencies(opts: Options): DependencyResolvedInfo[] {
 }
 
 function resolveFileDependencies(opts: Options): DependencyResolvedInfo[] {
-  const { getLineByIndex, content } = opts
+  const { getLineBySubchar, content } = opts
 
   const commentChars = getCommentChars()
 
   return resolveDependenciesByRegExp(opts)
     .concat(resolveDependenciesByGlob(opts))
     .filter(({ dep }) => {
-      const sourceContent = getLineByIndex(content.indexOf(dep)).text
+      const sourceContent = getLineBySubchar(dep)
 
       return checkContentEffectiveness({
         sourceContent,
@@ -119,4 +121,11 @@ function resolveDependenciesByGlob({ path, content }: Options): DependencyResolv
 function matchFileGlobs(content: string): string[] {
   return getGlobStatRegExpList()
     .flatMap(matchAllRegExp(content))
+}
+
+function makeGetLineTextBySubchar(content: string): Options['getLineBySubchar'] {
+  const lines = content.split(/\r?\n/g)
+
+  return (subchar: string) =>
+    lines.find(line => line.includes(subchar)) ?? ''
 }

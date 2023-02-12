@@ -23,10 +23,10 @@
   - [x] Circular dependency detection for JavaScript/TypeScript.
   - [x] Identify ESM, CommonJS.
   - [x] Support for default suffixes and default index files.
-  - [x] Identifying names, third-party packages, and so on.
+  - [x] Identifying aliases, third-party packages, and so on.
   - [x] Identify dependencies such as Vite that use glob for bulk imports.
   - [x] Identify the comments.
-  - [x] Custom import syntax, which can be used for circular dependency detection in other languages or other module format syntax by configuring it).
+  - [x] Custom import syntax, which can be used for circular dependency detection in other languages or other module format syntax by configuring it.
 
 - View circular dependencies:
   - [x] Jump to ring file.
@@ -35,7 +35,7 @@
 
 # Configuration
 
-> Unless otherwise specified, the configuration content is the plug-in default.
+> Unless otherwise specified, the configuration content is the plugin default.
 
 ## Warning level
 

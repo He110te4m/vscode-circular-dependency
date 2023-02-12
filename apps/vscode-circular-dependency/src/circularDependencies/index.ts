@@ -67,7 +67,7 @@ function registerCircularDependencyActions(collection: DiagnosticCollection, cac
   cacheMap.update(uri.fsPath, undefined)
   collection.delete(uri)
 
-  const circularDependencies: DependencyResolvedInfo[][] = detectCircularDependencies(uri.fsPath, cacheMap, doc)
+  const circularDependencies: DependencyResolvedInfo[][] = detectCircularDependencies(uri.fsPath, cacheMap)
   const formatterCircularDependencies = resolveCircularDependencies(doc, circularDependencies)
   // const cleanupDependencies = cleanUpUselessDependencies(doc, formatterCircularDependencies)
 
