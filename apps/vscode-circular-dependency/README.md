@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://raw.githubusercontent.com/He110te4m/vscode-circular-dependency/c853cef5247a10bc1d75f0d21530d07aeb81d89d/apps/vscode-circular-dependency/icons/loop.png" alt="Circular Dependency Icon" height="150">
+  <img src="https://raw.githubusercontent.com/He110te4m/vscode-circular-dependency/main/apps/vscode-circular-dependency/icons/loop.png" alt="Circular Dependency Icon" height="150">
 </p>
 
 <h1 align="center">Circular Dependency</h1>
@@ -33,9 +33,27 @@
   - [x] View the dependency loop diagram.
   - [x] Jump any file in a dependent ring.
 
-# Examples
+# Usages
 
+- Basic
 
+![](https://raw.githubusercontent.com/He110te4m/vscode-circular-dependency/main/apps/vscode-circular-dependency/images/examples/base_check.gif)
+
+- Support for automatic completion of module suffixes
+
+![](https://raw.githubusercontent.com/He110te4m/vscode-circular-dependency/main/apps/vscode-circular-dependency/images/examples/autofill-suffix.gif)
+
+- The default index of module is supported
+
+![](https://raw.githubusercontent.com/He110te4m/vscode-circular-dependency/main/apps/vscode-circular-dependency/images/examples/default-index.gif)
+
+- `Glob` import syntax is supported
+
+![](https://raw.githubusercontent.com/He110te4m/vscode-circular-dependency/main/apps/vscode-circular-dependency/images/examples/glob.gif)
+
+- Supports jumping to any dependency in the circular dependency
+
+![](https://raw.githubusercontent.com/He110te4m/vscode-circular-dependency/main/apps/vscode-circular-dependency/images/examples/goto-any-dependency-module.gif)
 
 # Configuration
 
@@ -138,9 +156,9 @@
 
 > If this project helps you, please sponsor me for a cup of coffee to better provide follow-up services.
 
-![WeChat](https://raw.githubusercontent.com/He110te4m/vscode-circular-dependency/c853cef5247a10bc1d75f0d21530d07aeb81d89d/apps/vscode-circular-dependency/images/sponsor/WeChatPay.jpg)
+![WeChat](https://raw.githubusercontent.com/He110te4m/vscode-circular-dependency/main/apps/vscode-circular-dependency/images/sponsor/WeChatPay.jpg)
 
-![ALi](https://raw.githubusercontent.com/He110te4m/vscode-circular-dependency/c853cef5247a10bc1d75f0d21530d07aeb81d89d/apps/vscode-circular-dependency/images/sponsor/ALiPay.jpg)
+![ALi](https://raw.githubusercontent.com/He110te4m/vscode-circular-dependency/main/apps/vscode-circular-dependency/images/sponsor/ALiPay.jpg)
 
 # License
 

@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://raw.githubusercontent.com/He110te4m/vscode-circular-dependency/c853cef5247a10bc1d75f0d21530d07aeb81d89d/apps/vscode-circular-dependency/icons/loop.svg" alt="Circular Dependency Icon" height="150">
+  <img src="https://raw.githubusercontent.com/He110te4m/vscode-circular-dependency/main/apps/vscode-circular-dependency/icons/loop.svg" alt="Circular Dependency Icon" height="150">
 </p>
 
 <h1 align="center">循环依赖检测</h1>
@@ -35,7 +35,25 @@
 
 # 功能示例
 
+- 基本使用
 
+![](https://raw.githubusercontent.com/He110te4m/vscode-circular-dependency/main/apps/vscode-circular-dependency/images/examples/base_check.gif)
+
+- 支持自动补全模块后缀
+
+![](https://raw.githubusercontent.com/He110te4m/vscode-circular-dependency/main/apps/vscode-circular-dependency/images/examples/autofill-suffix.gif)
+
+- 支持查找文件夹默认 index
+
+![](https://raw.githubusercontent.com/He110te4m/vscode-circular-dependency/main/apps/vscode-circular-dependency/images/examples/default-index.gif)
+
+- 支持匹配 glob 批量导入语法
+
+![](https://raw.githubusercontent.com/He110te4m/vscode-circular-dependency/main/apps/vscode-circular-dependency/images/examples/glob.gif)
+
+- 支持跳转到依赖环中任意依赖
+
+![](https://raw.githubusercontent.com/He110te4m/vscode-circular-dependency/main/apps/vscode-circular-dependency/images/examples/goto-any-dependency-module.gif)
 
 # 配置项
 
@@ -138,9 +156,9 @@
 
 > 如果这个项目对你有帮助，请赞助我喝杯咖啡，以更好的提供后续服务。
 
-![WeChat](https://raw.githubusercontent.com/He110te4m/vscode-circular-dependency/c853cef5247a10bc1d75f0d21530d07aeb81d89d/apps/vscode-circular-dependency/images/sponsor/WeChatPay.jpg)
+![WeChat](https://raw.githubusercontent.com/He110te4m/vscode-circular-dependency/main/apps/vscode-circular-dependency/images/sponsor/WeChatPay.jpg)
 
-![ALi](https://raw.githubusercontent.com/He110te4m/vscode-circular-dependency/c853cef5247a10bc1d75f0d21530d07aeb81d89d/apps/vscode-circular-dependency/images/sponsor/ALiPay.jpg)
+![ALi](https://raw.githubusercontent.com/He110te4m/vscode-circular-dependency/main/apps/vscode-circular-dependency/images/sponsor/ALiPay.jpg)
 
 # 许可证
 
