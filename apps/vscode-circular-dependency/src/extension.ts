@@ -1,10 +1,19 @@
-import type { Disposable, ExtensionContext } from 'vscode'
+import { Disposable, type ExtensionContext, workspace } from 'vscode'
 import { useCircularDependenciesDetection } from './circularDependencies'
 
 export function activate({ subscriptions, workspaceState }: ExtensionContext) {
-  const disposables: Disposable[] = []
+  let disposables: Disposable[] = []
+  disposables = useCircularDependenciesDetection(workspaceState)
 
-  subscriptions.push(...disposables.concat(useCircularDependenciesDetection(workspaceState)))
+  workspace.onDidChangeConfiguration(() => {
+    const disposable = Disposable.from(...disposables)
+    disposables = useCircularDependenciesDetection(workspaceState)
+    subscriptions.push(...disposables)
+
+    return disposable
+  })
+
+  subscriptions.push(...disposables)
 }
 
 export function deactivate() {}
