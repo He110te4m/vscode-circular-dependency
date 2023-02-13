@@ -13,12 +13,16 @@ export function isAllowedCircularDependency() {
   return getErrorLevel() === 'none'
 }
 
+export function isEnablePersistentCaching() {
+  return !!getConfig().get<boolean>('allow-persistent-caching', true)
+}
+
 export function isShowDependencyLoop() {
-  return !!getConfig().get<boolean>('vscode-circular-dependency.enable-dependency-loop')
+  return !!getConfig().get<boolean>('enable-dependency-loop')
 }
 
 export function isEnableGoToDependenciesCodeLens() {
-  return !!getConfig().get<boolean>('enable-going-to-the-dependent-file.enable-dependency-loop')
+  return !!getConfig().get<boolean>('enable-going-to-the-dependent-file')
 }
 
 //#endregion

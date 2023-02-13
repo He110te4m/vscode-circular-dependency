@@ -60,6 +60,11 @@
           "default": "error",
           "description": "How to display information when a circular dependency is detected."
         },
+        "vscode-circular-dependency.allow-persistent-caching": {
+          "type": "boolean",
+          "default": true,
+          "description": "The data parsed in the project will be persisted and cached automatically the next time it is opened."
+        },
         "vscode-circular-dependency.enable-dependency-loop": {
           "type": "boolean",
           "default": false,

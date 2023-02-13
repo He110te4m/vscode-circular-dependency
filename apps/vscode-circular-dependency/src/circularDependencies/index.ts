@@ -1,5 +1,5 @@
 import { type Disposable, type Memento, languages } from 'vscode'
-import { isAllowedCircularDependency } from '../helpers/config'
+import { isAllowedCircularDependency, isEnablePersistentCaching } from '../helpers/config'
 import type { AllCacheCollections } from './types'
 import { registerDiagnosticService } from './services/diagnostic'
 import { registerHoverService } from './services/hover'
@@ -17,7 +17,9 @@ export function useCircularDependenciesDetection(cacheMap: Memento): Disposable[
     dependenciesCacheStore: cacheMap,
   }
 
-  // cleanCacheMap(cacheCollectoions)
+  if (!isEnablePersistentCaching()) {
+    cleanCacheMap(cacheCollectoions)
+  }
 
   return [
     collection,
