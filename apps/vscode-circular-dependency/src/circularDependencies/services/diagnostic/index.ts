@@ -1,9 +1,9 @@
-import { type TextDocument, type Uri, window, workspace } from 'vscode'
+import { type TextDocument, window, workspace } from 'vscode'
 import { debounce } from 'debounce'
-import type { AllCacheCollections, CacheStoreType } from '../../types'
-import { createDiagnosticsByDependencies } from '../../createDiagnosticsByDependencies'
-import { resolveCircularDependencies } from '../../resolveCircularDependencies'
-import { detectCircularDependencies } from '../../detectCircularDependencies'
+import type { AllCacheCollections } from '../../types'
+import { createDiagnosticsByDependencies } from '../../helpers/createDiagnosticsByDependencies'
+import { getFormatterCircularDependencies } from '../../helpers/getFormatterCircularDependencies'
+import { deleteCacheByUri } from '../../helpers/deleteCacheByUri'
 
 export function registerDiagnosticService(opts: AllCacheCollections) {
   return [
@@ -48,16 +48,4 @@ function registerCircularDependencyActions(doc: TextDocument, opts: AllCacheColl
     getFormatterCircularDependencies(dependenciesCacheStore, doc),
   )
   diagnosticCacheStore.set(uri, diagnosticsList)
-}
-
-function getFormatterCircularDependencies(cacheMap: CacheStoreType, doc: TextDocument) {
-  return resolveCircularDependencies(
-    doc,
-    detectCircularDependencies(doc.uri.fsPath, cacheMap),
-  )
-}
-
-function deleteCacheByUri(uri: Uri, { diagnosticCacheStore, dependenciesCacheStore }: AllCacheCollections) {
-  diagnosticCacheStore.delete(uri)
-  dependenciesCacheStore.update(uri.fsPath, undefined)
 }

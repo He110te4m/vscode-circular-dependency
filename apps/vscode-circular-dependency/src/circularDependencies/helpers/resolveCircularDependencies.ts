@@ -1,6 +1,6 @@
 import { existsSync, readFileSync } from 'node:fs'
 import { Position, Range, type TextDocument } from 'vscode'
-import type { DependencyResolvedInfo, FormatterCircularDependencies } from './types'
+import type { DependencyResolvedInfo, FormatterCircularDependencies } from '../types'
 
 export function resolveCircularDependencies(doc: TextDocument, circularDependencies: DependencyResolvedInfo[][]) {
   const { fsPath: path } = doc.uri
