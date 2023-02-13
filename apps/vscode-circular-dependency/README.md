@@ -30,8 +30,8 @@
 
 - View circular dependencies:
   - [x] Jump to ring file.
-  - [ ] View the dependency loop diagram.
-  - [ ] Jump any file in a dependent ring.
+  - [x] View the dependency loop diagram.
+  - [x] Jump any file in a dependent ring.
 
 # Configuration
 
@@ -42,7 +42,13 @@
 ```json5
 {
   // Configure the warning level with an enumeration value: ["error", "warning", "none"].
-  "vscode-circular-dependency.error-level": "error"
+  "vscode-circular-dependency.error-level": "error",
+
+  // Allows extended persistence of cached data. When enabled, the cached data is recovered after VSCode restart.
+  "vscode-circular-dependency.allow-persistent-caching": true,
+
+  // During suspension, a dependency diagram is displayed for circular dependencies, and jumps to the corresponding file are supported
+  "vscode-circular-dependency.enable-dependency-loop": false
 }
 ```
 
@@ -109,6 +115,7 @@
     "cjs",
     "mjs"
   ],
+
   // Import module as a directory, automatically find the default file, you need to fill in the full file name, does not support omitting the suffix, according to the array order match
   "vscode-circular-dependency.default-indexs": [
     "index.ts",

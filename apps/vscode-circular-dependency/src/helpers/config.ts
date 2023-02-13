@@ -21,10 +21,6 @@ export function isShowDependencyLoop() {
   return !!getConfig().get<boolean>('enable-dependency-loop')
 }
 
-export function isEnableGoToDependenciesCodeLens() {
-  return !!getConfig().get<boolean>('enable-going-to-the-dependent-file')
-}
-
 //#endregion
 
 //#region Project environment

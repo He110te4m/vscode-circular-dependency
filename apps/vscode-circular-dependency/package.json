@@ -70,11 +70,6 @@
           "default": false,
           "description": "The dependency loop graph is displayed when the dependency loop is hover."
         },
-        "vscode-circular-dependency.enable-going-to-the-dependent-file": {
-          "type": "boolean",
-          "default": false,
-          "description": "Add CodeLens to show all the dependent files in the circular dependencies, and allow a quick jump to the corresponding file."
-        },
         "vscode-circular-dependency.packages-root": {
           "type": "string",
           "default": "node_modules",

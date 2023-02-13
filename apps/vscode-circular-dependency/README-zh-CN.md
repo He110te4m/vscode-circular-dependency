@@ -30,8 +30,8 @@
 
 - 查看循环依赖
   - [x] 跳转到成环文件
-  - [ ] 查看依赖环图
-  - [ ] 跳转依赖环中任意文件
+  - [x] 查看依赖环图
+  - [x] 跳转依赖环中任意文件
 
 # 配置项
 
@@ -42,7 +42,13 @@
 ```json5
 {
   // 配置告警级别，支持 [ "error", "warning", "none" ]
-  "vscode-circular-dependency.error-level": "error"
+  "vscode-circular-dependency.error-level": "error",
+
+  // 允许扩展持久化缓存数据。启用后，将在 VSCode 重启后恢复缓存数据
+  "vscode-circular-dependency.allow-persistent-caching": true,
+
+  // 在悬浮时，展示循环依赖的依赖关系图，并支持跳转到对应文件中
+  "vscode-circular-dependency.enable-dependency-loop": false
 }
 ```
 
@@ -77,6 +83,7 @@
     ["/*", "*/"],
     ["/**", "*/"]
   ],
+
   // 匹配导入模块的正则表达式
   "vscode-circular-dependency.import-statement-regexp": [
     // 匹配  ESM 静态导入模块，如：
@@ -88,6 +95,7 @@
     // 匹配 CommonJS 导入模块，如： `require()`
     "(?:require\\s*\\(\\s*)(?<quote>['\"])(.*?)\\k<quote>"
   ],
+
   // 匹配 glob 动态导入
   "vscode-circular-dependency.glob-import-statement-regexp": [
     // 匹配 Vite 最新的 glob 导入语法
@@ -107,6 +115,7 @@
     "cjs",
     "mjs"
   ],
+
   // 导入模块为目录时，自动查找默认文件，需要填写完整文件名，不支持省略后缀，按数组顺序匹配
   "vscode-circular-dependency.default-indexs": [
     "index.ts",
