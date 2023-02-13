@@ -4,10 +4,10 @@ features:
   ☐ 预研 auto import 场景支持 @low
 
 bugfix:
-  ☐ 监听配置变更重新初始化相关 services
   ☐ 文件内容变更时，使用局部更新，不全量更新依赖关系 @low
 
 Archive:
+  ✔ 监听配置变更重新初始化相关 services @done(23-02-13 14:41) @project(bugfix)
   ✔ document 展示依赖环图，需要添加是否展示配置，默认不展示 @done(23-02-13 11:47) @project(features)
   ✘ 支持通过 codeLens 跳转依赖环图，但是需要支持开关，默认关闭  结论：走 Hover 直接在展示的时候支持跳转，不需要再跑 CodeLens 了 @cancelled(23-02-13 11:36) @project(features)
   ✔ 告警时错误只覆盖导入的依赖 @done(23-02-12 12:33) @project(features)
