@@ -6,10 +6,19 @@ import { getFormatterCircularDependencies } from '../../helpers/getFormatterCirc
 import { deleteCacheByUri } from '../../helpers/deleteCacheByUri'
 
 export function registerDiagnosticService(opts: AllCacheCollections) {
-  return [
+  const disposes = [
     registerForActivationEventListener(opts),
     registerFileContentChangeEventListener(opts),
   ]
+
+  workspace.onDidChangeConfiguration(() => {
+    opts.diagnosticCacheStore.clear()
+    disposes.forEach(({ dispose }) => {
+      dispose()
+    })
+  })
+
+  return disposes
 }
 
 function registerForActivationEventListener(opts: AllCacheCollections) {

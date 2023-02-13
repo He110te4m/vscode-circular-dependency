@@ -1,4 +1,4 @@
-import { type Disposable, type Memento, languages, workspace } from 'vscode'
+import { type Disposable, type Memento, languages } from 'vscode'
 import { isAllowedCircularDependency, isEnablePersistentCaching } from '../helpers/config'
 import type { AllCacheCollections } from './types'
 import { registerDiagnosticService } from './services/diagnostic'
@@ -16,12 +16,6 @@ export function useCircularDependenciesDetection(cacheMap: Memento): Disposable[
     diagnosticCacheStore: collection,
     dependenciesCacheStore: cacheMap,
   }
-
-  workspace.onDidChangeConfiguration(() => {
-    // clean diagnostics when configuration changed
-    collection.clear()
-    return null
-  })
 
   if (!isEnablePersistentCaching()) {
     cleanCacheMap(cacheCollectoions)

@@ -14,7 +14,7 @@
 
 <br>
 
-# features
+# Features
 
 - Custom Alarm mode:
   - [x] Support for configuring alarm levels: error, warning, no warning.
@@ -32,6 +32,10 @@
   - [x] Jump to ring file.
   - [x] View the dependency loop diagram.
   - [x] Jump any file in a dependent ring.
+
+# Examples
+
+
 
 # Configuration
 
@@ -129,6 +133,14 @@
 # Thanks
 
 - [threedayAAAAA](https://github.com/threedayAAAAA) suggested the idea of supporting the default index file and the corresponding feature PR
+
+# Sponsor me
+
+> If this project helps you, please sponsor me for a cup of coffee to better provide follow-up services.
+
+![WeChat](https://raw.githubusercontent.com/He110te4m/vscode-circular-dependency/c853cef5247a10bc1d75f0d21530d07aeb81d89d/apps/vscode-circular-dependency/images/sponsor/WeChatPay.jpg)
+
+![ALi](https://raw.githubusercontent.com/He110te4m/vscode-circular-dependency/c853cef5247a10bc1d75f0d21530d07aeb81d89d/apps/vscode-circular-dependency/images/sponsor/ALiPay.jpg)
 
 # License
 

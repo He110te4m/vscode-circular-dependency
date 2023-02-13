@@ -33,6 +33,10 @@
   - [x] 查看依赖环图
   - [x] 跳转依赖环中任意文件
 
+# 功能示例
+
+
+
 # 配置项
 
 > 如无特别说明，配置内容即为插件默认值
@@ -129,6 +133,14 @@
 # 致谢
 
 - [threedayAAAAA](https://github.com/threedayAAAAA) 提出需要支持默认 index 文件的 idea 及对应的特性 PR
+
+# 赞助我
+
+> 如果这个项目对你有帮助，请赞助我喝杯咖啡，以更好的提供后续服务。
+
+![WeChat](https://raw.githubusercontent.com/He110te4m/vscode-circular-dependency/c853cef5247a10bc1d75f0d21530d07aeb81d89d/apps/vscode-circular-dependency/images/sponsor/WeChatPay.jpg)
+
+![ALi](https://raw.githubusercontent.com/He110te4m/vscode-circular-dependency/c853cef5247a10bc1d75f0d21530d07aeb81d89d/apps/vscode-circular-dependency/images/sponsor/ALiPay.jpg)
 
 # 许可证
 
