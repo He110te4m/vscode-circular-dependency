@@ -1,5 +1,5 @@
 import type { CheckCommentEffectivenessOptions } from '@circular-dependency/utils/libs/comment'
-import type { Memento, Range } from 'vscode'
+import type { DiagnosticCollection, Memento, Range } from 'vscode'
 
 export type CacheStoreType = Memento
 
@@ -11,3 +11,8 @@ export interface FormatterCircularDependencies {
 }
 
 export type CommentChars = CheckCommentEffectivenessOptions['commentChars'][number]
+
+export interface AllCacheCollections {
+  diagnosticCacheStore: DiagnosticCollection
+  dependenciesCacheStore: CacheStoreType
+}
