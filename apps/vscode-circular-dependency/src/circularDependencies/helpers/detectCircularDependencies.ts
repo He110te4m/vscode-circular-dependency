@@ -1,11 +1,11 @@
 import { checkContentEffectiveness } from '@circular-dependency/utils/libs/comment'
-import { getCommentChars, getGlobStatRegExpList, getImportStatRegExpList, getPackageDirectoryName } from '../helpers/config'
-import { resolve } from '../helpers/path/resolve'
-import { getFileContent } from '../helpers/file'
-import type { CacheStoreType, DependencyResolvedInfo } from './types'
-import { matchDependenciesByRegExp } from './matchDependencies/matchDependenciesByRegExp'
-import { matchAllRegExp } from './matchDependencies/utils'
-import { matchDependenciesByGlob } from './matchDependencies/matchDependenciesByGlob'
+import { getCommentChars, getGlobStatRegExpList, getImportStatRegExpList, getPackageDirectoryName } from '../../helpers/config'
+import { resolve } from '../../helpers/path/resolve'
+import { getFileContent } from '../../helpers/file'
+import type { CacheStoreType, DependencyResolvedInfo } from '../types'
+import { matchDependenciesByRegExp } from '../matchDependencies/matchDependenciesByRegExp'
+import { matchAllRegExp } from '../matchDependencies/utils'
+import { matchDependenciesByGlob } from '../matchDependencies/matchDependenciesByGlob'
 
 interface Options {
   path: string

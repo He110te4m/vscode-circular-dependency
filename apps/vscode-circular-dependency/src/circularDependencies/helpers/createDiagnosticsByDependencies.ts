@@ -1,6 +1,6 @@
 import { Diagnostic, DiagnosticSeverity, Uri } from 'vscode'
-import { getErrorLevel } from '../helpers/config'
-import type { DependencyResolvedInfo, FormatterCircularDependencies } from './types'
+import { getErrorLevel } from '../../helpers/config'
+import type { DependencyResolvedInfo, FormatterCircularDependencies } from '../types'
 
 const errorMessage = 'There is a circular dependency in the current dependency package, please check the dependencies'
 
