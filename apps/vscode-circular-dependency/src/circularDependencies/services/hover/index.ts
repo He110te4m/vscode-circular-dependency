@@ -1,4 +1,4 @@
-import { type Disposable, Hover, MarkdownString, Uri, languages, workspace } from 'vscode'
+import { type Disposable, Hover, MarkdownString, Uri, languages } from 'vscode'
 import type { AllCacheCollections, DependencyResolvedInfo } from '../../types'
 import { getFormatterCircularDependencies } from '../../helpers/getFormatterCircularDependencies'
 import { isShowDependencyLoop } from '../../../helpers/config'
@@ -22,10 +22,10 @@ export function registerHoverService({ dependenciesCacheStore }: AllCacheCollect
     },
   })
 
-  workspace.onDidChangeConfiguration(() => {
-    // clean on configuration change
-    dispose.dispose()
-  })
+  // workspace.onDidChangeConfiguration(() => {
+  //   // clean on configuration change
+  //   dispose.dispose()
+  // })
 
   return dispose
 }
