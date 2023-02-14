@@ -4,6 +4,7 @@ import type { AllCacheCollections } from '../../types'
 import { createDiagnosticsByDependencies } from '../../helpers/createDiagnosticsByDependencies'
 import { getFormatterCircularDependencies } from '../../helpers/getFormatterCircularDependencies'
 import { deleteCacheByUri } from '../../helpers/deleteCacheByUri'
+import { isAllowedCircularDependency } from '../../../helpers/config'
 
 export function registerDiagnosticService(opts: AllCacheCollections) {
   const disposes = [
@@ -13,9 +14,6 @@ export function registerDiagnosticService(opts: AllCacheCollections) {
 
   workspace.onDidChangeConfiguration(() => {
     opts.diagnosticCacheStore.clear()
-    disposes.forEach(({ dispose }) => {
-      dispose()
-    })
   })
 
   return disposes
@@ -46,6 +44,10 @@ function registerFileContentChangeEventListener(opts: AllCacheCollections) {
 }
 
 function registerCircularDependencyActions(doc: TextDocument, opts: AllCacheCollections) {
+  if (isAllowedCircularDependency()) {
+    return
+  }
+
   const { uri } = doc
   const { diagnosticCacheStore, dependenciesCacheStore } = opts
 
