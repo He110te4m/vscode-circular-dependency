@@ -156,9 +156,8 @@
 
 > If this project helps you, please sponsor me for a cup of coffee to better provide follow-up services.
 
-![WeChat](https://raw.githubusercontent.com/He110te4m/vscode-circular-dependency/main/apps/vscode-circular-dependency/images/sponsor/WeChatPay.jpg)
-
-![ALi](https://raw.githubusercontent.com/He110te4m/vscode-circular-dependency/main/apps/vscode-circular-dependency/images/sponsor/ALiPay.jpg)
+<img alt="WeChat" src="https://raw.githubusercontent.com/He110te4m/vscode-circular-dependency/main/apps/vscode-circular-dependency/images/sponsor/WeChatPay.jpg" width="240px" />
+<img alt="ALi" src="https://raw.githubusercontent.com/He110te4m/vscode-circular-dependency/main/apps/vscode-circular-dependency/images/sponsor/ALiPay.jpg" width="240px" />
 
 # License
 
