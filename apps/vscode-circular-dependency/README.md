@@ -144,6 +144,30 @@
     "index.js",
     "index.cjs",
     "index.mjs"
+  ],
+
+  // Used to handle boundary issues for large projects.
+  // File names with specific suffixes are ignored.
+  // Ignore by default: `.md`、`.d.ts`。
+  "vscode-circular-dependency.exclude-suffix-list": [
+    ".md",
+    ".d.ts"
+  ],
+
+  // Used to handle boundary issues for large projects.
+  // All files in a specific directory are ignored.
+  // Ignore by default: `node_modules`。
+  // Relative/absolute paths are supported, and the default relative project root is used when relative paths are used.
+  "vscode-circular-dependency.exclude-directories": [
+    "./node_modules"
+  ],
+
+  // Used to handle boundary issues for large projects.
+  // All imports for a particular module are ignored.
+  // Will be directly associated with the 'import' statement.
+  // When configured to 'A/B' , importing 'A/B' , 'A/B/C' , 'A/B/C/D' and so on will be ignored. Used for common purposes such as `monorepo` or `cross-project` usage
+  "vscode-circular-dependency.exclude-modules": [
+    "./node_modules"
   ]
 }
 ```

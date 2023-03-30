@@ -65,6 +65,18 @@ export function getDefaultIndexs() {
   return getConfig().get<string[]>('default-indexs', [])
 }
 
+export function getExcludeSuffixList() {
+  return getConfig().get<string[]>('exclude-suffix-list', [])
+}
+
+export function getExcludeDirectories() {
+  return getConfig().get<string[]>('exclude-directories', [])
+}
+
+export function getExcludeModules() {
+  return getConfig().get<string[]>('exclude-modules', [])
+}
+
 //#endregion
 
 function getConfig() {

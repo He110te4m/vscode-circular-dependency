@@ -144,6 +144,30 @@
     "index.js",
     "index.cjs",
     "index.mjs"
+  ],
+
+  // 用于处理大型项目的边界问题。
+  // 忽略特定后缀的文件名。
+  // 默认忽略 `.md`、`.d.ts`。
+  "vscode-circular-dependency.exclude-suffix-list": [
+    ".md",
+    ".d.ts"
+  ],
+
+  // 用于处理大型项目的边界问题。
+  // 忽略特定目录中的所有文件。
+  // 默认忽略 `node_modules`。
+  // 支持相对路径 / 绝对路径，使用相对路径时默认相对项目根目录
+  "vscode-circular-dependency.exclude-directories": [
+    "./node_modules"
+  ],
+
+  // 用于处理大型项目的边界问题。
+  // 忽略特定模块的所有导入。
+  // 将直接与 `import` 语句关联。
+  // 配置为 `a/b` 时，导入 `a/b`、`a/b/c`、`a/b/c/d` 等都将被忽略，用于处理 monorepo 或者跨项目使用等常见
+  "vscode-circular-dependency.exclude-modules": [
+    "./node_modules"
   ]
 }
 ```
