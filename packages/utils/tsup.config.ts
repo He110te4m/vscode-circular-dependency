@@ -51,3 +51,5 @@ function getModules(directory: string) {
     })
     .map(filename => basename(filename, tsSuffix))
 }
+
+//#endregion

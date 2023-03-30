@@ -14,7 +14,13 @@ interface Options {
   getLineBySubchar: (char: string) => string
 }
 
-export function detectCircularDependencies(targetDepPath: string, cacheMap: CacheStoreType) {
+interface DetectCircularDependenciesOption {
+  targetDepPath: string
+  cacheMap: CacheStoreType
+  checkDeps: (dep: DependencyResolvedInfo) => boolean
+}
+
+export function detectCircularDependencies({ targetDepPath, cacheMap, checkDeps }: DetectCircularDependenciesOption) {
   const result: DependencyResolvedInfo[][] = []
   const checkedDeps = new Set()
   searchDeps(targetDepPath, [])
@@ -30,6 +36,7 @@ export function detectCircularDependencies(targetDepPath: string, cacheMap: Cach
       path: currentDepPath,
       getLineBySubchar: makeGetLineTextBySubchar(content),
     })
+      .filter(checkDeps)
     if (!deps.length || checkedDeps.has(currentDepPath)) {
       return
     }

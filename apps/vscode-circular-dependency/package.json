@@ -136,6 +136,27 @@
             "index.mjs"
           ],
           "description": "When the resolved module address is a directory, an attempt is made to match the default index file."
+        },
+        "vscode-circular-dependency.exclude-suffix-list": {
+          "type": "array",
+          "default": [
+            ".md",
+            ".d.ts"
+          ],
+          "description": "Module suffixes that need to be excluded."
+        },
+        "vscode-circular-dependency.exclude-directories": {
+          "type": "array",
+          "default": [
+            "./node_modules"
+          ],
+          "description": "Directories that need to be excluded."
+        },
+        "vscode-circular-dependency.exclude-modules": {
+          "type": "array",
+          "default": [
+          ],
+          "description": "Module name prefixes that need to be excluded."
         }
       }
     }
