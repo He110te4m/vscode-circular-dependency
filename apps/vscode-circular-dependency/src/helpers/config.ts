@@ -1,3 +1,4 @@
+import path = require('node:path')
 import { workspace } from 'vscode'
 import type { CommentChars } from '../circularDependencies/types'
 
@@ -30,7 +31,15 @@ export function getPackageDirectoryName() {
 }
 
 export function getAliasMap() {
-  return getConfig().get<Record<string, string>>('alias-map', {})
+  const aliasMap = getConfig().get<Record<string, string>>('alias-map', {})
+  const root = workspace.workspaceFolders?.[0]?.uri.fsPath
+  if (root) {
+    for (const key in aliasMap) {
+      aliasMap[key] = path.join(root, aliasMap[key])
+    }
+  }
+
+  return aliasMap
 }
 
 //#endregion
